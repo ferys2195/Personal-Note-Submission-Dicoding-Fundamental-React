@@ -1,4 +1,4 @@
-import { Link, Route, Routes } from "react-router";
+import { Link, useRoutes } from "react-router";
 
 import DetailPage from "./pages/DetailPage";
 import HomePage from "./pages/HomePage";
@@ -8,6 +8,13 @@ import { FiArchive, FiHome } from "react-icons/fi";
 import NotFoundPage from "./pages/NotFoundPage";
 
 function App() {
+  const routes = useRoutes([
+    { path: "/", element: <HomePage /> },
+    { path: "/archives", element: <ArchivePage /> },
+    { path: "/notes/:id", element: <DetailPage /> },
+    { path: "/new", element: <AddPage /> },
+    { path: "*", element: <NotFoundPage /> },
+  ]);
   return (
     <>
       <header className="mb-5 shadow p-1">
@@ -29,15 +36,7 @@ function App() {
           </ul>
         </div>
       </header>
-      <main className="w-1/2 mx-auto">
-        <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/archives" element={<ArchivePage />} />
-          <Route path="/notes/:id" element={<DetailPage />} />
-          <Route path="/new" element={<AddPage />} />
-          <Route path="*" element={<NotFoundPage />} />
-        </Routes>
-      </main>
+      <main className="w-1/2 mx-auto">{routes}</main>
     </>
   );
 }

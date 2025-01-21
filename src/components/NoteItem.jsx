@@ -6,6 +6,7 @@ import { FaTrash } from "react-icons/fa";
 import showDialog from "../utils/dialog";
 import { convert } from "html-to-text";
 import PropTypes from "prop-types";
+import { noteItemPropTypes } from "../utils/custom-prop-type";
 
 export default function NoteItem({
   id,
@@ -65,12 +66,8 @@ export default function NoteItem({
   );
 }
 
+NoteItem.propTypes = noteItemPropTypes;
 NoteItem.propTypes = {
-  id: PropTypes.string.isRequired,
-  title: PropTypes.string.isRequired,
-  createdAt: PropTypes.string.isRequired,
-  body: PropTypes.string.isRequired,
-  archived: PropTypes.bool.isRequired,
   onDelete: PropTypes.func.isRequired,
   onArchive: PropTypes.func.isRequired,
 };
