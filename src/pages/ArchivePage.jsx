@@ -1,42 +1,52 @@
 import React, { useState } from "react";
-import { FiPlus } from "react-icons/fi";
-import { Link, useNavigate, useSearchParams } from "react-router-dom";
-import { getActiveNotes, getArchivedNotes } from "../utils/local-data";
+import {
+  archiveUnarchiveNote,
+  deleteNote,
+  getArchivedNotes,
+} from "../utils/local-data";
 import NoteList from "../components/NoteList";
-import Button from "../components/Button";
+import { useSearchParams } from "react-router";
 import SearchBar from "../components/SearchBar";
-import Page from "../components/Page";
 
 export default function ArchivePage() {
-  const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const keywordFromURL = searchParams.get("keyword") || "";
   const [keyword, setKeyword] = useState(keywordFromURL);
-  const [activeNotes] = useState(getArchivedNotes);
-
-  const onDeleteHandler = (id) => {
-    deleteContact(id);
-    setContacts(getContacts());
-  };
+  const [notes, setNotes] = useState(getArchivedNotes());
 
   const onKeywordChangeHandler = (newKeyword) => {
     setKeyword(newKeyword);
     setSearchParams({ keyword: newKeyword });
   };
 
-  const filteredNotes = activeNotes.filter((note) =>
+  const filteredNotes = notes.filter((note) =>
     note.title.toLowerCase().includes(keyword.toLowerCase())
   );
 
+  const onDeleteHandler = (id) => {
+    deleteNote(id);
+    setNotes(getArchivedNotes());
+  };
+  const onArchiveHandler = (id) => {
+    archiveUnarchiveNote(id);
+    setNotes(getArchivedNotes());
+  };
   return (
-    <Page title={"Arsip"}>
-      <SearchBar keyword={keyword} keywordChange={onKeywordChangeHandler} />
-      <div className="mt-5 grid grid-cols-4 gap-3">
-        <NoteList notes={filteredNotes} onDelete={onDeleteHandler} />
+    <>
+      <div className="w-full py-5">
+        <SearchBar keyword={keyword} keywordChange={onKeywordChangeHandler} />
       </div>
-      <Button onClick={() => navigate("new")}>
-        <FiPlus className="text-black text-xl" />
-      </Button>
-    </Page>
+      {filteredNotes && filteredNotes.length > 0 ? (
+        <NoteList
+          notes={filteredNotes}
+          onDelete={onDeleteHandler}
+          onArchive={onArchiveHandler}
+        />
+      ) : (
+        <div className="flex justify-center items-center h-52">
+          <p className="text-xl text-gray-500">Tidak ada arsip</p>
+        </div>
+      )}
+    </>
   );
 }

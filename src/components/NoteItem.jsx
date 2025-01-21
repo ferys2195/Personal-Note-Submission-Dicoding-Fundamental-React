@@ -1,10 +1,11 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link } from "react-router";
 import { showFormattedDate } from "../utils";
-import { FiArchive, FiDelete, FiTrash } from "react-icons/fi";
-import { FaArchive, FaTrash } from "react-icons/fa";
-import { BiSolidArchiveIn, BiSolidArchiveOut } from "react-icons/bi";
-import { deleteNote } from "../utils/local-data";
+import { BiArchiveIn, BiArchiveOut } from "react-icons/bi";
+import { FaTrash } from "react-icons/fa";
+import showDialog from "../utils/dialog";
+import { convert } from "html-to-text";
+import PropTypes from "prop-types";
 
 export default function NoteItem({
   id,
@@ -13,6 +14,7 @@ export default function NoteItem({
   body,
   archived,
   onDelete,
+  onArchive,
 }) {
   return (
     <div className="flex flex-col bg-gradient-to-t from-gray-800 to-gray-700 shadow-md rounded-xl p-3 w-full">
@@ -21,23 +23,54 @@ export default function NoteItem({
           <h2 className="text-xl font-bold">{title}</h2>
         </Link>
         <small className="text-gray-400">{showFormattedDate(createdAt)}</small>
-        <p className="text-gray-100 line-clamp-4">{body}</p>
+        <p className="text-gray-100 line-clamp-4">{convert(body)}</p>
       </div>
-      <div className="flex justify-end items-center gap-x-2 p-1 mt-3">
+      <div className="flex justify-end items-center gap-2 p-1 mt-3">
         {!archived ? (
-          <button title="Arsipkan" type="button" onClick={onDelete}>
-            <BiSolidArchiveIn className="text-gray-300" />
+          <button
+            title="Arsipkan"
+            className="btn btn-ghost btn-sm btn-square"
+            type="button"
+            onClick={() => onArchive(id)}
+          >
+            <BiArchiveIn className="text-secondary text-xl" />
           </button>
         ) : (
-          <button title="Keluarkan dari Arsip" type="button" onClick={onDelete}>
-            <BiSolidArchiveOut className="text-green-300" />
+          <button
+            title="Keluarkan dari Arsip"
+            type="button"
+            className="btn btn-ghost btn-sm btn-square"
+            onClick={() => onArchive(id)}
+          >
+            <BiArchiveOut className="text-primary text-xl" />
           </button>
         )}
 
-        <button title="Hapus Catatan" onClick={deleteNote(id)}>
-          <FaTrash className="text-red-500" />
+        <button
+          title="Hapus Catatan"
+          className="btn btn-ghost btn-sm btn-square"
+          onClick={() =>
+            showDialog({
+              title: "Konfirmasi Penghapusan",
+              text: "Apakah Anda yakin ingin menghapus catatan ini?",
+              confirmButtonText: "Hapus Sekarang",
+              action: () => onDelete(id),
+            })
+          }
+        >
+          <FaTrash className="text-error text-xl" />
         </button>
       </div>
     </div>
   );
 }
+
+NoteItem.propTypes = {
+  id: PropTypes.string.isRequired,
+  title: PropTypes.string.isRequired,
+  createdAt: PropTypes.string.isRequired,
+  body: PropTypes.string.isRequired,
+  archived: PropTypes.bool.isRequired,
+  onDelete: PropTypes.func.isRequired,
+  onArchive: PropTypes.func.isRequired,
+};

@@ -79,6 +79,15 @@ function deleteNote(id) {
   notes = notes.filter((note) => note.id !== id);
 }
 
+function archiveUnarchiveNote(id) {
+  notes = notes.map((note) => {
+    if (note.id === id) {
+      return { ...note, archived: !note.archived };
+    }
+    return note;
+  });
+}
+
 function archiveNote(id) {
   notes = notes.map((note) => {
     if (note.id === id) {
@@ -120,5 +129,6 @@ export {
   getNote,
   archiveNote,
   unarchiveNote,
+  archiveUnarchiveNote,
   addNote,
 };

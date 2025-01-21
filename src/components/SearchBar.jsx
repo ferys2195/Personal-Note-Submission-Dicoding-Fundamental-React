@@ -3,13 +3,6 @@ import PropTypes from "prop-types";
 
 export default function SearchBar({ keyword, keywordChange }) {
   return (
-    // <input
-    //   className="border border-white rounded p-2 w-full text-black focus:border-blue-500 focus:outline-none transition-all duration-2000 ease-in-out"
-    //   type="text"
-    //   placeholder="Cari berdasarkan judul ..."
-    //   value={keyword}
-    //   onChange={(event) => keywordChange(event.target.value)}
-    // />
     <label className="input input-bordered flex items-center gap-2">
       <input
         type="text"
@@ -34,7 +27,7 @@ export default function SearchBar({ keyword, keywordChange }) {
   );
 }
 
-SearchBar.propType = {
+SearchBar.propTypes = {
   keyword: PropTypes.string.isRequired,
   keywordChange: PropTypes.func.isRequired,
 };

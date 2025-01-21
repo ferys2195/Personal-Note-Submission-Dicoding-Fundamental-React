@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams } from "react-router";
 import { getNote } from "../utils/local-data";
 import NoteDetail from "../components/NoteDetail";
 import NotFoundPage from "./NotFoundPage";
