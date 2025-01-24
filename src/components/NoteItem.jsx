@@ -18,13 +18,13 @@ export default function NoteItem({
   onArchive,
 }) {
   return (
-    <div className="flex flex-col bg-gradient-to-t from-gray-800 to-gray-700 shadow-md rounded-xl p-3 w-full">
+    <div className="flex flex-col bg-gradient-to-t from-base-200 to-base-100 shadow-md rounded-xl p-3 w-full">
       <div className="flex-grow">
         <Link to={`/notes/${id}`}>
           <h2 className="text-xl font-bold">{title}</h2>
         </Link>
-        <small className="text-gray-400">{showFormattedDate(createdAt)}</small>
-        <p className="text-gray-100 line-clamp-4">{convert(body)}</p>
+        <small>{showFormattedDate(createdAt)}</small>
+        <p className="text-base-content line-clamp-4">{convert(body)}</p>
       </div>
       <div className="flex justify-end items-center gap-2 p-1 mt-3">
         {!archived ? (

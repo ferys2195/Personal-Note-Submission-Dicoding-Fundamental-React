@@ -1,20 +1,31 @@
-import React, { useState } from "react";
-import {
-  archiveUnarchiveNote,
-  deleteNote,
-  getActiveNotes,
-} from "../utils/local-data";
+import React, { useEffect, useState } from "react";
+import { archiveUnarchiveNote, deleteNote } from "../utils/local-data";
 import NoteList from "../components/NoteList";
 import { useNavigate, useSearchParams } from "react-router";
 import SearchBar from "../components/SearchBar";
 import { FiPlus } from "react-icons/fi";
+import { getActiveNotes } from "../utils/local-data";
 
 export default function HomePage() {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
-  const keywordFromURL = searchParams.get("keyword") || "";
-  const [keyword, setKeyword] = useState(keywordFromURL);
+  const [keyword, setKeyword] = useState(() => {
+    return searchParams.get("keyword") || "";
+  });
   const [notes, setNotes] = useState(getActiveNotes());
+  // const [notes, setNotes] = useState([]);
+
+  // useEffect(() => {
+  //   const fetchNotes = async () => {
+  //     try {
+  //       const { data } = await getActiveNotes();
+  //       setNotes(data);
+  //     } catch (error) {
+  //       console.log(error);
+  //     }
+  //   };
+  //   fetchNotes();
+  // }, []);
 
   const onKeywordChangeHandler = (newKeyword) => {
     setKeyword(newKeyword);
