@@ -1,5 +1,5 @@
-import React, { useEffect, useMemo, useState } from "react";
-import { BrowserRouter, Route, Routes, useRoutes } from "react-router";
+import React, { useEffect, useState } from "react";
+import { Route, Routes, useNavigate } from "react-router";
 import DetailPage from "./pages/DetailPage";
 import HomePage from "./pages/HomePage";
 import AddPage from "./pages/AddPage";
@@ -8,94 +8,99 @@ import NotFoundPage from "./pages/NotFoundPage";
 import Navigation from "./components/Navigation";
 import RegisterPage from "./pages/RegisterPage";
 import LoginPage from "./pages/LoginPage";
-import LocaleContext from "./contexts/AppContext";
-import { getUserLogged, putAccessToken } from "./utils/network-data";
+import {
+  getAccessToken,
+  getUserLogged,
+  login,
+  putAccessToken,
+} from "./utils/network-data";
+import AppContext from "./contexts/AppContext";
+
+const navigate = useNavigate;
 
 function App() {
-  const [authData, setAuthData] = useState({
-    user: null,
-    initializing: true,
-  });
-  const [themeData, setThemeData] = useState("light");
+  const [userLogged, setUserLogged] = useState(null);
+  const [isAuthenticated, setIsAuthenticated] = useState(!!getAccessToken());
 
-  useEffect(() => {
-    async function init() {
-      try {
-        const { data } = await getUserLogged();
-        setAuthData(() => ({ user: data, initializing: false }));
-      } catch (error) {
-        setAuthData(() => ({ user: null, initializing: false }));
-      }
-    }
+  const [themeData, setThemeData] = useState(
+    localStorage.getItem("theme") || "light"
+  );
 
-    init();
+  const [locale, setLocale] = useState(localStorage.getItem("locale") || "id");
 
-    if (localStorage.getItem("theme")) {
-      setThemeData(localStorage.getItem("theme"));
-    }
-  }, []);
+  const toggleLocale = () => {
+    setLocale((prevState) => (prevState === "id" ? "en" : "id"));
+    localStorage.setItem("locale", locale === "id" ? "en" : "id");
+  };
+
+  const toggleTheme = () => {
+    setThemeData((prevState) => (prevState === "light" ? "dark" : "light"));
+    localStorage.setItem("theme", themeData === "light" ? "dark" : "light");
+  };
 
   useEffect(() => {
     document.documentElement.setAttribute("data-theme", themeData);
   }, [themeData]);
 
-  const onLoginSuccess = async ({ accessToken }) => {
-    try {
-      putAccessToken(accessToken);
-      const { data } = await getUserLogged();
+  useEffect(() => {
+    const accessToken = getAccessToken();
+    async function init() {
+      try {
+        const { data } = await getUserLogged();
+        setIsAuthenticated(true);
+        setUserLogged(data);
+      } catch (error) {
+        setIsAuthenticated(false);
+      }
+    }
 
-      setAuthData((prevState) => {
-        return {
-          ...prevState,
-          user: data,
-        };
-      });
+    if (accessToken != null) {
+      init();
+    }
+  }, [isAuthenticated]);
+
+  const handleLogin = async ({ email, password }) => {
+    try {
+      const { data } = await login({ email, password });
+      putAccessToken(data.accessToken);
+      setIsAuthenticated(true);
+      navigate("/");
     } catch (error) {
-      console.log(error);
+      return error;
     }
   };
 
-  const onLogout = () => {
-    setAuthData((prevState) => {
-      return {
-        ...prevState,
-        user: null,
-      };
-    });
-    putAccessToken("");
+  const handleLogout = () => {
+    localStorage.removeItem("accessToken");
+    setUserLogged(null);
+    setIsAuthenticated(false);
   };
-
-  const toggleTheme = () => {
-    setThemeData((prevState) => (prevState === "light" ? "dark" : "light"));
-
-    localStorage.setItem("theme", themeData === "light" ? "dark" : "light");
-  };
-
-  if (authData.initializing) {
-    return null;
-  }
-
   return (
-    <LocaleContext.Provider
+    <AppContext.Provider
       value={{
-        authData,
+        isAuthenticated,
+        userLogged,
         themeData,
         toggleTheme,
-        onLogout,
+        locale,
+        toggleLocale,
+        handleLogout,
       }}
     >
-      {authData.user === null ? (
-        <div className="w-full min-h-screen flex justify-center items-center">
-          <Routes>
-            <Route path="/register" element={<RegisterPage />} />
-            <Route
-              path="/login"
-              element={<LoginPage loginSuccess={onLoginSuccess} />}
-            />
-            <Route path="/*" element={<LoginPage />} />
-          </Routes>
-        </div>
-      ) : (
+      {!isAuthenticated ? (
+        <main className="grid place-items-center min-h-screen">
+          <section className="w-full mx-auto p-3 md:w-1/2 lg:w-1/4">
+            <Routes>
+              <Route path="/register" element={<RegisterPage />} />
+              <Route
+                path="/login"
+                element={<LoginPage onLogin={handleLogin} />}
+              />
+              <Route path="*" element={<LoginPage onLogin={handleLogin} />} />
+            </Routes>
+          </section>
+        </main>
+      ) : userLogged ? (
         <>
           <header className="mb-5 shadow">
             <Navigation />
@@ -110,8 +115,8 @@ function App() {
             </Routes>
           </main>
         </>
-      )}
-    </LocaleContext.Provider>
+      ) : null}
+    </AppContext.Provider>
   );
 }
 

@@ -6,7 +6,7 @@ import { FaTrash } from "react-icons/fa";
 import showDialog from "../utils/dialog";
 import { convert } from "html-to-text";
 import PropTypes from "prop-types";
-import { noteItemPropTypes } from "../utils/custom-prop-type";
+import { noteItemPropTypes } from "../utils/customPropTypes";
 
 export default function NoteItem({
   id,

@@ -1,13 +1,17 @@
-import React from "react";
+import React, { useContext } from "react";
 import PropTypes from "prop-types";
+import AppContext from "../contexts/AppContext";
 
 export default function SearchBar({ keyword, keywordChange }) {
+  const { locale } = useContext(AppContext);
   return (
     <label className="input input-bordered flex items-center gap-2">
       <input
         type="text"
         className="grow"
-        placeholder="Cari berdasarkan judul ..."
+        placeholder={
+          locale === "id" ? "Cari berdasarkan judul ..." : "Search by title ..."
+        }
         value={keyword}
         onChange={(event) => keywordChange(event.target.value)}
       />

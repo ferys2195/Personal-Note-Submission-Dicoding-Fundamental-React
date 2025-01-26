@@ -1,19 +1,19 @@
-import PropTypes from "prop-types";
 import React from "react";
-import { login } from "../utils/network-data";
-import Login from "../components/Login";
+import LoginInput from "../components/LoginInput";
+import PropTypes from "prop-types";
 
-export default function LoginPage({ loginSuccess }) {
-  async function onLogin({ email, password }) {
-    const { error, data } = await login({ email, password });
+export default function LoginPage({ onLogin }) {
+  const handleLogin = async ({ email, password }) =>
+    await onLogin({ email, password });
 
-    if (!error) {
-      loginSuccess(data);
-    }
-  }
-
-  return <Login onLogin={onLogin} />;
+  return (
+    <>
+      <h1 className="text-center font-semibold text-2xl mb-5">Login Akun</h1>
+      <LoginInput onLogin={handleLogin} />
+    </>
+  );
 }
+
 LoginPage.propTypes = {
-  loginSuccess: PropTypes.func.isRequired,
+  onLogin: PropTypes.func.isRequired,
 };
