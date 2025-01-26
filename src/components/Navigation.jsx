@@ -5,6 +5,9 @@ import { MdGTranslate } from "react-icons/md";
 import { Link } from "react-router";
 import AppContext from "../contexts/AppContext";
 import showDialog from "../utils/dialog";
+import LocaleToggle from "./LocaleToggle";
+import ThemeToggle from "./ThemeToggle";
+import LogoutButton from "./LogoutButton";
 
 export default function Navigation() {
   const {
@@ -39,41 +42,9 @@ export default function Navigation() {
           </li>
         </ul>
         <div className="flex items-center justify-center gap-3">
-          <label className="swap">
-            <input type="checkbox" onChange={() => toggleLocale()} />
-            <div className="swap-on flex items-center gap-2">
-              <MdGTranslate /> <span className="uppercase">{locale}</span>
-            </div>
-            <div className="swap-off flex items-center gap-2">
-              <MdGTranslate /> <span className="uppercase">{locale}</span>
-            </div>
-          </label>
-          <button
-            className="btn btn-circle btn-ghost btn-sm"
-            onClick={() => toggleTheme()}
-          >
-            <label className="swap swap-rotate">
-              {themeData == "light" ? (
-                <CiLight className="w-5 h-5" />
-              ) : (
-                <CiDark className="w-5 h-5" />
-              )}
-            </label>
-          </button>
-
-          <button
-            className="btn btn-sm btn-ghost"
-            onClick={() =>
-              showDialog({
-                title: "Logout dari akun ?",
-                text: "Apakah Anda ingin logout sekarang ?",
-                confirmButtonText: "Ya",
-                action: () => handleLogout(),
-              })
-            }
-          >
-            <FiLogOut /> {userLogged.name}
-          </button>
+          <LocaleToggle locale={locale} toggleLocale={toggleLocale} />
+          <ThemeToggle themeData={themeData} toggleTheme={toggleTheme} />
+          <LogoutButton title={userLogged.name} handleLogout={handleLogout} />
         </div>
       </div>
     </div>
