@@ -1,10 +1,13 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useContext, useEffect, useState } from "react";
 import useInput from "../hooks/useInput";
 import { FiKey, FiMail, FiUser } from "react-icons/fi";
 import { Link } from "react-router";
 import PropTypes from "prop-types";
+import AppContext from "../contexts/AppContext";
 
 export default function RegisterInput({ onRegister }) {
+  const { locale } = useContext(AppContext);
+
   const [name, onNameChange] = useInput("");
   const [email, onEmailChange] = useInput("");
   const [password, onPasswordChange] = useInput("");
@@ -46,7 +49,7 @@ export default function RegisterInput({ onRegister }) {
           value={name}
           onChange={onNameChange}
           className="grow"
-          placeholder="Name"
+          placeholder={locale === "id" ? "Nama anda" : "Your name"}
         />
       </label>
       <label className="input input-bordered flex items-center gap-2 mb-2">
@@ -63,7 +66,9 @@ export default function RegisterInput({ onRegister }) {
         <FiKey />
         <input
           type="password"
-          placeholder="Input password"
+          placeholder={
+            locale === "id" ? "Masukan password" : "Type your password"
+          }
           className="grow"
           value={password}
           onChange={onPasswordChange}
@@ -73,7 +78,9 @@ export default function RegisterInput({ onRegister }) {
         <FiKey />
         <input
           type="password"
-          placeholder="Ketik ulang password"
+          placeholder={
+            locale === "id" ? "Ketik ulang password" : "Re-type your password"
+          }
           className="grow"
           value={password2}
           onChange={onPasswordChange2}
@@ -81,18 +88,22 @@ export default function RegisterInput({ onRegister }) {
       </label>
       <small>
         {password2.length > 0 && password != password2
-          ? "Password tidak sama"
+          ? locale === "id"
+            ? "Password Doesn't match"
+            : "Password tidak sama"
           : ""}
       </small>
       <div className="flex justify-between items-center mt-3">
         <span>
-          Sudah Punya Akun ?{" "}
-          <Link to={"/login"} className="link-primary">
-            Login
+          {locale === "id"
+            ? "Sudah Punya Akun ? "
+            : "Already have an account ? "}
+          <Link to={"/"} className="link-primary">
+            {locale === "id" ? "Masuk" : "Sign in"}
           </Link>
         </span>
         <button type="submit" className="btn btn-primary" disabled={!isValid}>
-          Daftar
+          {locale === "id" ? "Daftar Sekarang" : "Sign Up Now"}
         </button>
       </div>
     </form>

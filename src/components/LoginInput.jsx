@@ -1,12 +1,14 @@
-import React from "react";
+import React, { useContext } from "react";
 import useInput from "../hooks/useInput";
 import PropTypes from "prop-types";
 import { FiKey, FiLogIn, FiMail } from "react-icons/fi";
 import { Link } from "react-router";
+import AppContext from "../contexts/AppContext";
 
 export default function LoginInput({ onLogin }) {
   const [email, onEmailChange] = useInput("");
   const [password, onPasswordChange] = useInput("");
+  const { locale } = useContext(AppContext);
 
   const onSubmitHandler = (e) => {
     e.preventDefault();
@@ -40,13 +42,13 @@ export default function LoginInput({ onLogin }) {
       </label>
       <div className="flex justify-between items-center mt-3">
         <span>
-          Belum Punya Akun ?{" "}
+          {locale === "id" ? "Belum Punya Akun ? " : "Don't have an account ? "}
           <Link to={"/register"} className="link-primary">
-            Daftar
+            {locale === "id" ? "Daftar" : "Sign Up"}
           </Link>
         </span>
         <button type="submit" className="btn btn-primary">
-          <FiLogIn /> Login
+          <FiLogIn /> {locale === "id" ? "Masuk Sekarang" : "Sign In Now"}
         </button>
       </div>
     </form>

@@ -15,6 +15,8 @@ import {
   putAccessToken,
 } from "./utils/network-data";
 import AppContext from "./contexts/AppContext";
+import { MdGTranslate } from "react-icons/md";
+import { CiDark, CiLight } from "react-icons/ci";
 
 const navigate = useNavigate;
 
@@ -88,18 +90,41 @@ function App() {
       }}
     >
       {!isAuthenticated ? (
-        <main className="grid place-items-center min-h-screen">
-          <section className="w-full mx-auto p-3 md:w-1/2 lg:w-1/4">
-            <Routes>
-              <Route path="/register" element={<RegisterPage />} />
-              <Route
-                path="/login"
-                element={<LoginPage onLogin={handleLogin} />}
-              />
-              <Route path="*" element={<LoginPage onLogin={handleLogin} />} />
-            </Routes>
-          </section>
-        </main>
+        <>
+          <header className="p-3 fixed top-0 left-0 right-0">
+            <div className="flex justify-end gap-3 me-5">
+              <button
+                className="btn btn-circle btn-ghost btn-sm"
+                onClick={() => toggleTheme()}
+              >
+                <label className="swap swap-rotate">
+                  {themeData == "light" ? (
+                    <CiLight className="w-5 h-5" />
+                  ) : (
+                    <CiDark className="w-5 h-5" />
+                  )}
+                </label>
+              </button>
+              <label className="swap">
+                <input type="checkbox" onChange={() => toggleLocale()} />
+                <div className="swap-on flex items-center gap-2">
+                  <MdGTranslate /> <span className="uppercase">{locale}</span>
+                </div>
+                <div className="swap-off flex items-center gap-2">
+                  <MdGTranslate /> <span className="uppercase">{locale}</span>
+                </div>
+              </label>
+            </div>
+          </header>
+          <main className="grid place-items-center min-h-screen">
+            <section className="w-full mx-auto p-3 md:w-1/2 lg:w-1/4">
+              <Routes>
+                <Route path="/register" element={<RegisterPage />} />
+                <Route path="*" element={<LoginPage onLogin={handleLogin} />} />
+              </Routes>
+            </section>
+          </main>
+        </>
       ) : userLogged ? (
         <>
           <header className="mb-5 shadow">
