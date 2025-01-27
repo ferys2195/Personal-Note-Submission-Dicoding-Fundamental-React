@@ -14,9 +14,7 @@ export default function DetailPage() {
     const getSingleNote = async () => {
       const { data } = await getNote(id);
       setNote(data);
-      if (data) {
-        setLoading(false);
-      }
+      setLoading(false);
     };
     getSingleNote();
   }, [id]);
