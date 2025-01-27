@@ -1,6 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router";
-import { addNote } from "../utils/local-data";
+import { addNote } from "../utils/network-data";
 import NoteInput from "../components/NoteInput";
 
 export default function AddPage() {

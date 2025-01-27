@@ -1,7 +1,7 @@
 import React from "react";
 import NoteItem from "./NoteItem";
 import PropTypes from "prop-types";
-import { noteItemPropTypes } from "../utils/custom-prop-type";
+import { noteItemPropTypes } from "../utils/customPropTypes";
 
 export default function NoteList({ notes, onDelete, onArchive }) {
   return (

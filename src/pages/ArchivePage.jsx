@@ -1,50 +1,36 @@
-import React, { useState } from "react";
-import {
-  archiveUnarchiveNote,
-  deleteNote,
-  getArchivedNotes,
-} from "../utils/local-data";
+import React from "react";
+import { getArchivedNotes } from "../utils/network-data";
 import NoteList from "../components/NoteList";
-import { useSearchParams } from "react-router";
 import SearchBar from "../components/SearchBar";
+import useNotes from "../hooks/useNotes";
 
 export default function ArchivePage() {
-  const [searchParams, setSearchParams] = useSearchParams();
-  const keywordFromURL = searchParams.get("keyword") || "";
-  const [keyword, setKeyword] = useState(keywordFromURL);
-  const [notes, setNotes] = useState(getArchivedNotes());
-
-  const onKeywordChangeHandler = (newKeyword) => {
-    setKeyword(newKeyword);
-    setSearchParams({ keyword: newKeyword });
-  };
-
-  const filteredNotes = notes.filter((note) =>
-    note.title.toLowerCase().includes(keyword.toLowerCase())
-  );
-
-  const onDeleteHandler = (id) => {
-    deleteNote(id);
-    setNotes(getArchivedNotes());
-  };
-  const onArchiveHandler = (id) => {
-    archiveUnarchiveNote(id);
-    setNotes(getArchivedNotes());
-  };
+  const {
+    keyword,
+    notes,
+    loading,
+    onKeywordChangeHandler,
+    onDeleteHandler,
+    onArchiveHandler,
+  } = useNotes(getArchivedNotes, true);
   return (
     <>
       <div className="w-full py-5">
         <SearchBar keyword={keyword} keywordChange={onKeywordChangeHandler} />
       </div>
-      {filteredNotes && filteredNotes.length > 0 ? (
+      {loading ? (
+        <div className="flex justify-center">
+          <span className="loading loading-dots loading-lg"></span>
+        </div>
+      ) : notes && notes.length > 0 ? (
         <NoteList
-          notes={filteredNotes}
+          notes={notes}
           onDelete={onDeleteHandler}
           onArchive={onArchiveHandler}
         />
       ) : (
         <div className="flex justify-center items-center h-52">
-          <p className="text-xl text-gray-500">Tidak ada arsip</p>
+          <p className="text-xl text-gray-500">Tidak ada catatan</p>
         </div>
       )}
     </>

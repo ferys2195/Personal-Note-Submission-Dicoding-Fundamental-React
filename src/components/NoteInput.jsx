@@ -1,46 +1,22 @@
 import PropTypes from "prop-types";
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { Editor } from "@tinymce/tinymce-react";
 import { FiSave } from "react-icons/fi";
+import useInput from "../hooks/useInput";
+import editorConfig from "../utils/editorConfig";
+import AppContext from "../contexts/AppContext";
 
 export default function NoteInput({ addNote }) {
-  const [form, setForm] = useState({
-    title: "",
-    body: "",
-  });
-
-  const handleChange = (name, value) => {
-    setForm((prevForm) => ({
-      ...prevForm,
-      [name]: value,
-    }));
-  };
+  const { locale } = useContext(AppContext);
+  const [title, setTitle] = useInput("");
+  const [body, setBody] = useState("");
 
   const handleSubmit = (e) => {
     e.preventDefault();
     addNote({
-      title: form.title,
-      body: form.body, // Form body sudah berisi HTML dari editor TinyMCE
+      title,
+      body,
     });
-  };
-
-  const editorConfig = {
-    toolbar: [
-      "undo redo | bold italic underline | bullist numlist | blockquote | codesample | link",
-    ],
-    plugins: [
-      "link",
-      "lists",
-      "codesample", // Plugin untuk menampilkan dan menyunting kode
-    ],
-    menubar: false, // Menonaktifkan menu bar
-    statusbar: false, // Menonaktifkan status bar
-    height: 300, // Tinggi editor
-    setup: (editor) => {
-      editor.on("change", () => {
-        handleChange("body", editor.getContent());
-      });
-    },
   };
 
   return (
@@ -49,24 +25,26 @@ export default function NoteInput({ addNote }) {
         <input
           type="text"
           name="title"
-          value={form.title}
-          onChange={(e) => handleChange("title", e.target.value)}
+          value={title}
+          onChange={setTitle}
           className="input input-bordered w-full"
-          placeholder="Masukan Judul Catatan"
+          placeholder={
+            locale === "id" ? "Masukkan Judul Catatan" : "Type Note Title"
+          }
           required
         />
       </div>
       <div className="mb-3">
         <Editor
-          apiKey="8m33aadeefn5hpgv08dnot7ha26kmx0sy0mhh5rfrbnenp9v" // Anda bisa mendaftar untuk mendapatkan API Key
-          value={form.body}
-          onEditorChange={(value) => handleChange("body", value)}
-          init={editorConfig}
+          apiKey="8m33aadeefn5hpgv08dnot7ha26kmx0sy0mhh5rfrbnenp9v"
+          value={body}
+          onEditorChange={setBody}
+          init={editorConfig(setBody)}
         />
       </div>
 
       <button type="submit" className="btn btn-primary">
-        <FiSave /> Simpan Catatan
+        <FiSave /> {locale === "id" ? "Simpan Catatan" : "Save Note"}
       </button>
     </form>
   );
